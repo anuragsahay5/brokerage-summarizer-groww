@@ -18,14 +18,22 @@ const RS_CHARGES = [
         STC: { BUY: 0.0001, SELL: 0.0001 },
         DPC: { BUY: 0.0, SELL: 20.0 },
         IPFTC: { BUY: 0.0001, SELL: 0.0001 }
+    },
+    {
+        STT: { BUY: 0.0, SELL: 0.1 },
+        SDC: { BUY: 0.003, SELL: 0.0 },
+        ETC: { BUY: 0.03503, SELL: 0.03503 },
+        STC: { BUY: 0.0001, SELL: 0.0001 },
+        DPC: { BUY: 0.0, SELL: 0.0 },
+        IPFTC: { BUY: 0.0005, SELL: 0.0005 }
     }
 ];
 
-const GROW_BRKG = {
-    MIN_PRICE: 5.0,
-    MAX_PRICE: 20.0,
-    RATE: 0.1,
-};
+const GROW_BRKG = [
+    { MIN_PRICE: 5.0, MAX_PRICE: 20.0, RATE: 0.1 },
+    { MIN_PRICE: 5.0, MAX_PRICE: 20.0, RATE: 0.1 },
+    { MIN_PRICE: 20.0, MAX_PRICE: 20.0, RATE: 0.0 }
+];
 
 const GST = 0.18
 
@@ -43,8 +51,8 @@ const GET_BROKERAGE_SUMMARY = (buy_price, sell_price, quantity, delivery) => {
         SELL: { GBKG: 0.0, STT: 0.0, SDC: 0.0, ETC: 0.0, STC: 0.0, IPFTC: 0.0, DPC: 0.0, GST: 0.0 }
     };
 
-    TOTAl_CHARGES.BUY.GBKG = parseFloat(Math.max(GROW_BRKG.MIN_PRICE, Math.min(GROW_BRKG.MAX_PRICE, 0.01 * GROW_BRKG.RATE * buy_total)).toFixed(2));
-    TOTAl_CHARGES.SELL.GBKG = parseFloat(Math.max(GROW_BRKG.MIN_PRICE, Math.min(GROW_BRKG.MAX_PRICE, 0.01 * GROW_BRKG.RATE * sell_total)).toFixed(2));
+    TOTAl_CHARGES.BUY.GBKG = parseFloat(Math.max(GROW_BRKG[delivery].MIN_PRICE, Math.min(GROW_BRKG[delivery].MAX_PRICE, 0.01 * GROW_BRKG[delivery].RATE * buy_total)).toFixed(2));
+    TOTAl_CHARGES.SELL.GBKG = parseFloat(Math.max(GROW_BRKG[delivery].MIN_PRICE, Math.min(GROW_BRKG[delivery].MAX_PRICE, 0.01 * GROW_BRKG[delivery].RATE * sell_total)).toFixed(2));
 
     TOTAl_CHARGES.BUY.STT = parseFloat(Math.max(1, 0.01 * RS_CHARGES[delivery].STT.BUY * buy_total).toFixed(0));
     TOTAl_CHARGES.SELL.STT = parseFloat(Math.max(1, 0.01 * RS_CHARGES[delivery].STT.SELL * sell_total).toFixed(0));
@@ -71,7 +79,7 @@ const GET_BROKERAGE_SUMMARY = (buy_price, sell_price, quantity, delivery) => {
         ) * GST
     ).toFixed(2)
     );
-    
+
     TOTAl_CHARGES.SELL.GST = parseFloat((
         (TOTAl_CHARGES.SELL.GBKG +
             TOTAl_CHARGES.SELL.DPC +
@@ -121,4 +129,4 @@ const GET_DETAILED_SUMMARY = (buy_price, sell_price, quantity, delivery) => {
     return { ...DETAILED_SUMMARY, BROKERAGE_SUMMARY }
 }
 
-console.log(GET_DETAILED_SUMMARY(138.5, 140, 100, 1))
+console.log(GET_DETAILED_SUMMARY(163.75, 164.75, 200, 0))
